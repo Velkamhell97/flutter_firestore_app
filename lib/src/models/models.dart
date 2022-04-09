@@ -1,0 +1,1 @@
+export 'package:firestore_app/src/models/user.dart';
