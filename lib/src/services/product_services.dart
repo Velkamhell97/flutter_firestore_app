@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:uuid/uuid.dart';
 
 import '../models/user.dart';
 import '../services/services.dart';
@@ -21,17 +20,17 @@ class ProductServices {
   // final Duration _timeoutDuration = Duration(seconds: 5);
   // FutureOr<DocumentReference<Product>> _timeoutError() => throw TimeoutException('Se agoto el tiempo de espera, verifica tu conexion');
 
+
   Future<String?> saveProduct(Product product, bool isConnected) async {
     try { 
-      /// Validacion Unique en el campo number
+      /// Validacion Unique en el campo name
       /// 
       /// Verifica que no haya otro producto con ese nombre al parecer tambien funciona offline
       final ref = await _productsRef.whereName(isEqualTo: product.name).get();
       
       final dbProduct = ref.docs.isEmpty ? null : ref.docs.single;
 
-      /// Solo cuando hay un producto con ese nombre y es diferente al mencionado producto
-      /// Se muestra la excepcion
+      /// Solo cuando hay un producto con ese nombre y es diferente al mencionado producto Se muestra la excepcion
       if((dbProduct != null && dbProduct.id != product.id)){
         throw FirebaseException(
           plugin: 'firestore/unique-restriction',
@@ -69,7 +68,6 @@ class ProductServices {
         final newProduct = await _productsRef.add(product);
         transaction.update(newProduct.reference, {'id': newProduct.id});
       });
-
     } else {
       /// Como no se sabe que campo se actualizara se pasa todo
       await _productsRef.doc(product.id).update( 
@@ -90,13 +88,10 @@ class ProductServices {
   Future<void> _createOrUpdateProductOffline(Product product) async {
     /// Si es nuevo hacemos el set con el id y al reconectarse subimos la imagen y actualizamos el url
     if (product.id == null) {
-      product.id = const Uuid().v4();
-
-      _productsRef.doc(product.id).set(product).then((_) {
+      _productsRef.add(product).then((value) {
+        ///El unico problema esque no se puede capturar el error de cloudinary
         _uploadImage(product.picture, null).then((imageUrl) {
-          if(imageUrl != null){
-            _productsRef.doc(product.id).update(picture: imageUrl);
-          }
+          _productsRef.doc(value.id).update(id: value.id, picture: imageUrl);
         });
       });
     } else { /// Si se actualiza se espera que se reconecte para subir la imagen
@@ -106,10 +101,9 @@ class ProductServices {
         price: product.price, 
         available: product.available
       ).then((_) {
+        /// Asi la imagen sea nula se puede subir a firestore por lo que no es necesario la validacion
         _uploadImage(product.picture, product.lastPicture).then((imageUrl) {
-          if(imageUrl != null){
-            _productsRef.doc(product.id).update(picture: imageUrl);
-          }
+          _productsRef.doc(product.id).update(picture: imageUrl);
         });
       });
     }
@@ -133,7 +127,7 @@ class ProductServices {
     if(image.contains('http')) return null;
 
     final fileName = lastImage?.split('/').last.split('.').first;
-
+    
     final imageUrl = await _cloudinary.uploadImage(image, fileName);
 
     return imageUrl;

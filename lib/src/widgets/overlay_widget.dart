@@ -24,19 +24,21 @@ class _OverlayWidgetState extends State<OverlayWidget> {
   @override
   Widget build(BuildContext context) {
     /// Aqui se ve la utilidad de listener del bloc
-    final online = context.watch<ConnectionProvider>().online;
+    return Consumer<ConnectionProvider>(
+      builder: (_, connection, __) {
+        if(!connection.online) _showDialog();
 
-    if(!online) _showDialog();
-
-    return Positioned.fill(
-      top: 30,
-      bottom: null,
-      left: 30,
-      right: 30,
-      child: ValueListenableBuilder<bool>(
-        valueListenable: _dialogNotifier,
-        builder: (_, value, __) => _OverlayDialog(show: value),
-      ),
+        return Positioned.fill(
+          top: 30,
+          bottom: null,
+          left: 30,
+          right: 30,
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _dialogNotifier,
+            builder: (_, value, __) => _OverlayDialog(show: value),
+          ),
+        );
+      },
     );
   }
 }

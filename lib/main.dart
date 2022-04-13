@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 
 import 'src/providers/providers.dart';
@@ -28,6 +29,8 @@ void main() async{
   await Firebase.initializeApp();
 
   await PushNotificationsService().init();
+
+  await dotenv.load();
 
   /// [Listener] de los mensajes en [background] y [terminada]
   /// 
@@ -89,7 +92,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
 
     /// [Callback] de los mensaje FCM con la app [terminada]
-    FirebaseMessaging.instance.getInitialMessage().then(pushNotifications.showNotification);
+    // FirebaseMessaging.instance.getInitialMessage().then(pushNotifications.showNotification);
 
     /// [Listener] de los mensajes en [foreground]
     /// 

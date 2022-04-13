@@ -1,5 +1,6 @@
 import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CloudinaryServices {
   CloudinaryServices._internal();
@@ -8,7 +9,11 @@ class CloudinaryServices {
 
   factory CloudinaryServices() => _instance;
 
-  final Cloudinary _cloudinary = Cloudinary('939227237552849', 'ErEEDpd7aPkDhNzJkg-2de9v0PY', 'dwzr9lray');
+  final Cloudinary _cloudinary = Cloudinary(
+    dotenv.env['CLOUDINARY_API_KEY']!, 
+    dotenv.env['CLOUDINARY_API_SECRET']!, 
+    dotenv.env['CLOUDINARY_CLOUD_NAME']!
+  );
 
   String get _uid => FirebaseAuth.instance.currentUser!.uid;
 

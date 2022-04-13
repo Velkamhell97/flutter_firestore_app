@@ -13,50 +13,46 @@ class ProductForm extends StatelessWidget {
       builder: (_, form, __) {
         return Form(
           key: form.formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10.0),
-            child: Column(
-              children: [
-                ///--------------------------
-                /// Product Name TextField
-                ///--------------------------
-                TextFormField(
-                  initialValue: form.product.name,
-                  decoration: const InputDecoration(labelText: 'Nombre:'),
-                  //-se va actualizando directamente los valores
-                  onChanged: (value) => form.product.name = value,
-                  validator: (value) => value == null || value.length < 2 ? 'El nombre es obligatorio' : null,
-                ),
+          child: Column(
+            children: [
+              ///--------------------------
+              /// Product Name TextField
+              ///--------------------------
+              TextFormField(
+                initialValue: form.product.name,
+                decoration: const InputDecoration(labelText: 'Nombre:'),
+                onChanged: (value) => form.product.name = value,
+                validator: (value) => value == null || value.length < 2 ? 'El nombre es obligatorio' : null,
+              ),
       
-                const  SizedBox(height: 15),
+              const SizedBox(height: 15),
       
-                ///--------------------------
-                /// Product Price TextField
-                ///--------------------------
-                TextFormField(
-                  initialValue: '${form.product.price}',
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))],
-                  decoration: const InputDecoration(labelText: 'Precio:'),
-                  onChanged: (value) {
-                    if(double.tryParse(value) == null) return;
-                    form.product.price = double.parse(value);
-                  },
-                  validator: (value) => value == null || value.isEmpty ? 'El precio es obligatorio' : null,
-                ),
+              ///--------------------------
+              /// Product Price TextField
+              ///--------------------------
+              TextFormField(
+                initialValue: '${form.product.price}',
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))],
+                decoration: const InputDecoration(labelText: 'Precio:'),
+                onChanged: (value) {
+                  if(double.tryParse(value) == null) return;
+                  form.product.price = double.parse(value);
+                },
+                validator: (value) => value == null || value.isEmpty ? 'El precio es obligatorio' : null,
+              ),
       
-                const SizedBox(height: 15),
-                
-                ///--------------------------
-                /// Product Available Switch
-                ///--------------------------
-                SwitchListTile.adaptive(
-                  onChanged: (value) => form.toggleAvailability(value),
-                  value: form.product.available,
-                  title: const Text('Disponible', style: TextStyle(color: Colors.black)),
-                ),
-              ],
-            ),
+              const SizedBox(height: 15),
+              
+              ///--------------------------
+              /// Product Available Switch
+              ///--------------------------
+              SwitchListTile.adaptive(
+                onChanged: (value) => form.toggleAvailability(value),
+                value: form.product.available,
+                title: const Text('Disponible', style: TextStyle(color: Colors.black)),
+              ),
+            ],
           ),
         );
       },

@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart' hide User;
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../models/user.dart';
@@ -9,8 +9,10 @@ import '../models/user.dart';
 class AuthServices {
   /// Procurar siempre utilizar getters cuando se trabaje con firebase para tener la instancia actual
   FirebaseAuth get _auth => FirebaseAuth.instance;
+
   static const _storage = FlutterSecureStorage();
 
+  /// Una de las formas de manejar errores con provider (y servicios) es devolviendo un nulo en caso de error
   Future<String?> signin(Map<String, dynamic> data) async{
     try {
       final userData = await _auth.signInWithEmailAndPassword(
@@ -36,6 +38,7 @@ class AuthServices {
 
   Future<String?> signup(Map<String, dynamic> data) async{
     try {
+      /// La session la mantiene FirebaseAuth
       final userData = await _auth.createUserWithEmailAndPassword(
         email: data['email'],
         password: data['password']
@@ -44,7 +47,6 @@ class AuthServices {
       final uid = userData.user!.uid;
 
       // final firebaseToken = userData.user!.getIdToken();
-
       await _storage.write(key: 'firebaseToken', value: uid);
 
       /// [Token] unico para la recepcion de mensajes FCM
@@ -110,9 +112,9 @@ class AuthServices {
       final uid = userData.user!.uid;
 
       // final firebaseToken = userData.user!.getIdToken();
-
       await _storage.write(key: 'firebaseToken', value: uid);
 
+      /// Si es la primera vez que ingresa con google se graba
       final refUsers = await usersRef.whereEmail(isEqualTo: googleUser.email).get();
 
       if(refUsers.docs.isEmpty){

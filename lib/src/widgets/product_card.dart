@@ -33,6 +33,8 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final draft = product.id == null;
+
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: _boxDecoration,
@@ -46,13 +48,13 @@ class ProductCard extends StatelessWidget {
           ///-------------------------
           /// Product Not Available
           ///-------------------------
-          if(!product.available)
-            const Align(
+          if(!product.available || draft)
+            Align(
               alignment: Alignment.topLeft,
               child: _RoundedBox(
-                radius: BorderRadius.only(bottomRight: Radius.circular(10.0)),
-                color: Colors.amber,
-                child: Text('No Disponible', style: _style1),
+                radius: const BorderRadius.only(bottomRight: Radius.circular(10.0)),
+                color: draft ? Colors.redAccent : Colors.amber,
+                child: Text(draft ? 'Borrador' : 'No Disponible', style: _style1),
               )
             ),
 
@@ -104,7 +106,7 @@ class _RoundedBox extends StatelessWidget {
     Key? key,
     required this.radius,
     this.color = Colors.deepPurple,
-    this.padding = const EdgeInsets.all(10.0),
+    this.padding = const EdgeInsets.symmetric(horizontal: 15.0, vertical:10.0),
     required this.child
   }) : super(key: key);
 

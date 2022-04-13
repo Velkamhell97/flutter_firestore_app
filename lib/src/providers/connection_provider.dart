@@ -11,6 +11,13 @@ class ConnectionProvider extends ChangeNotifier {
 
   String route = 'app';
 
+  bool _googleLoading = false;
+  bool get googleLoading => _googleLoading;
+  set googleLoading(bool value) {
+    _googleLoading = value;
+    notifyListeners();
+  }
+
   ConnectionProvider(){
     Connectivity().checkConnectivity().then((value) {
       /// Detecta primera conexion de la app

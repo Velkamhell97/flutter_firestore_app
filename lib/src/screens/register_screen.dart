@@ -19,11 +19,13 @@ class RegisterScreen extends StatelessWidget {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         body: AuthBackground(
+          /// Header
           header: SizedBox(
             height: size.height * 0.30,
             child: const Icon(Icons.person_pin, color: Colors.white, size: 100),
           ),
 
+          /// Form
           form: FractionallySizedBox(
             widthFactor: 0.9,
             child: Card(
@@ -45,11 +47,13 @@ class RegisterScreen extends StatelessWidget {
             ),
           ),
 
+          /// Pre-Footer
           preFooter: TextButton(
             onPressed: () => Navigator.of(context).pushReplacementNamed('login'), 
             child: const Text('Ya tengo una cuenta', style: _footerStyle)
           ),
 
+          /// Footer
           footer: SizedBox(height: size.height * 0.05),
         )
       ),

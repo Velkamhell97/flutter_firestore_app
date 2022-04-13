@@ -27,10 +27,7 @@ class _ProductBody extends StatelessWidget {
 
   static const _cardDecoration = BoxDecoration(
     color: Colors.white,
-    borderRadius: BorderRadius.vertical(
-      top: Radius.circular(45), 
-      bottom: Radius.circular(20)
-    ),
+    borderRadius: BorderRadius.vertical(top: Radius.circular(45), bottom: Radius.circular(20)),
     boxShadow: [
       BoxShadow(
         color: Colors.black26,
@@ -71,17 +68,9 @@ class _ProductBody extends StatelessWidget {
                         /// Se debe utilizar un consumer ya que el [Product] del formulario solo muta
                         /// pero no cambia su estado por lo que un selector no detectaria el cambio
                         Consumer<ProductFormProvider>(
-                          builder: (_, form, __) {
-                            return ProductPicture(form.product.picture, darken: true);
-                          },
+                          builder: (_, form, __) => ProductPicture(form.product.picture, darken: true)
                         ),
-                        
-                        const Positioned(
-                          top: 30,
-                          left: 0,
-                          right: 20,
-                          child: _ProductActions()
-                        ),
+                        const Positioned(top: 30, left: 0, right: 20, child: _ProductActions()),
                       ],
                     ),
                   ),
@@ -89,7 +78,10 @@ class _ProductBody extends StatelessWidget {
                   ///----------------------------
                   /// Product Form
                   ///----------------------------
-                  const ProductForm(),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10.0),
+                    child: ProductForm()
+                  ),
                 ],
               )
             ),
@@ -117,8 +109,8 @@ class _ProductBody extends StatelessWidget {
                 if(error != null) {
                   NotificationServices.showSnackBar(error);
                 } else {
-                  // NotificationServices.showBanner('Product added!');
                   Navigator.of(context).pop();
+                  // NotificationServices.showBanner('Product added!');
                   // Future.delayed(_duration, () => Navigator.of(context).pop());
                 }
 
@@ -156,9 +148,7 @@ class _ProductActions extends StatelessWidget {
                 final picker = ImagePicker();
                 final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
       
-                if(pickedFile == null) {
-                  return NotificationServices.showSnackBar('SELECCION CANCELADA');
-                }
+                if(pickedFile == null) return NotificationServices.showSnackBar('SELECCION CANCELADA');
             
                 context.read<ProductFormProvider>().setPicture(pickedFile.path);
               }, 
