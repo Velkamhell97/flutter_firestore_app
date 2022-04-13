@@ -105,23 +105,26 @@ class _MyAppState extends State<MyApp> {
     /// [LocalNotifications] el evento la manejara su funcion OnTap
     // FirebaseMessaging.onMessageOpenedApp.listen((message) {});
 
-    /// [Callback] de los mensjaes locales con la app [terminada]
-    /// 
-    /// Es similar a el [getInitial] de FCM, pero aqui no utilizamos la funcion de [showNotifications]
-    /// porque no recibimos un [RemoteMessage] sino otro tipo de dato, por esta razon ejecutamos
-    /// directamente el [callback] que se le pasa el stream de las [LocalNotifications]
-    FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails().then((details) {
-      if(details != null && details.didNotificationLaunchApp && details.payload != null){
-        _onNotificationTap(json.decode(details.payload!));
-      }
-    });
-
     /// [Stream] que escucha los tap de las [LocalNotifications] con la app en [foreground] o [background]
     /// 
     /// Siempre que se da tap a una notificacion local se agrega la data de la notificacion a este
     /// stream y con esa data es que ejecutamos el [callback], tener en cuenta que lo que recibe este
     /// [callback] ya no es un [RemoteMessage] sino un mapa con el [payload] de la notificacion
     pushNotifications.notificationStream.listen(_onNotificationTap);
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      /// [Callback] de los mensjaes locales con la app [terminada]
+      /// 
+      /// Es similar a el [getInitial] de FCM, pero aqui no utilizamos la funcion de [showNotifications]
+      /// porque no recibimos un [RemoteMessage] sino otro tipo de dato, por esta razon ejecutamos
+      /// directamente el [callback] que se le pasa el stream de las [LocalNotifications], escuchamos aqui
+      /// este metodo para que se alcancen a asignar el navigatorKey y navege correctamente al detalle
+      FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails().then((details) {
+        if(details != null && details.didNotificationLaunchApp && details.payload != null){
+          _onNotificationTap(json.decode(details.payload!));
+        }
+      });
+    });
   }
 
   @override
